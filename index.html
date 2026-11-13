@@ -90,40 +90,104 @@ body.admin .fab{display:block}
 .box{width:min(380px,92vw);background:var(--panel);border:1px solid #2a2e40;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:14px;transform:translateY(20px) scale(.96);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .modal.open .box{transform:none}
 .box h3{font:800 18px Unbounded,sans-serif;margin:0}
+html{scroll-padding-top:84px}
+a.btn{display:inline-block;text-decoration:none}
+.hero{padding-top:100px}
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:22px;padding:calc(12px + env(safe-area-inset-top,0px)) 22px 12px;background:#0c0d12cc;backdrop-filter:blur(14px);border-bottom:1px solid #1d2030}
+.nav .logo{font:800 16px Unbounded,sans-serif;color:var(--gold);margin-right:auto;text-decoration:none;white-space:nowrap}
+.nav .lk{color:var(--text);text-decoration:none;font-weight:700;font-size:15px;position:relative;padding:6px 2px;transition:color .3s}
+.nav .lk::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.nav .lk:hover{color:var(--gold)}
+.nav .lk:hover::after{transform:scaleX(1)}
+.chip{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.chip img{width:30px;height:30px;border-radius:50%}
+@media(max-width:760px){.nav .lk{display:none}.nav{gap:10px;padding-left:12px;padding-right:12px}.nav .btn{padding:8px 12px;font-size:13px}.chip span{display:none}}
+.wrap{max-width:900px;margin:0 auto}
+.news{background:var(--panel);border:1px solid #232634;border-radius:18px;padding:22px 24px;margin-bottom:16px;transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s}
+.news:hover{transform:translateY(-4px);border-color:#4a3d1a;box-shadow:0 16px 40px #0008}
+.news time{color:var(--gold);font-size:13px;font-weight:700}
+.news h3{margin:6px 0 8px;font:800 20px Unbounded,sans-serif}
+.news p{margin:0;color:#c3c7d6;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{text-align:center;color:var(--mute);padding:30px}
+.lrow{display:flex;align-items:center;gap:14px;padding:12px 18px;background:var(--panel);border:1px solid #232634;border-radius:14px;margin-bottom:10px;color:var(--text);text-decoration:none;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,background .35s}
+.lrow:hover{transform:translateX(6px) scale(1.01);border-color:var(--gold);background:#1a1d27}
+.lrow b{width:34px;font:800 16px Unbounded,sans-serif;color:var(--mute)}
+.lrow.top1 b{color:#ffd54a}.lrow.top2 b{color:#d0d6e0}.lrow.top3 b{color:#d9925a}
+.lrow img{width:44px;height:44px;border-radius:50%;background:#0b0c11}
+.lrow span{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.lrow em{font:800 18px Unbounded,sans-serif;color:var(--gold);font-style:normal}
+.lbtools{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;text-align:center}
+.tabs{display:flex;gap:8px}
+.tab{flex:1;background:var(--slot);border:1.5px solid var(--line);color:var(--text);border-radius:10px;padding:10px;font:700 14px Manrope,sans-serif;cursor:pointer;transition:all .3s}
+.tab:hover{border-color:var(--gold);transform:translateY(-2px)}
+.tab.on{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1204;border-color:transparent}
+.pane{display:none;flex:1;min-height:0;flex-direction:column;gap:12px}
+.pane.on{display:flex}
+textarea.in{min-height:140px;resize:vertical}
+.al{overflow:auto;display:flex;flex-direction:column;gap:8px}
+.ai{display:flex;gap:8px;align-items:center;background:var(--slot);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700}
+.ai span{flex:1}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<header class="hero">
+<nav class="nav">
+  <a class="logo" href="#top">🏆 Платина года</a>
+  <a class="lk" href="#news">Новости</a><a class="lk" href="#tour">Турнир</a><a class="lk" href="#leaderboard">Лидерборд</a>
+  <span id="nu"></span>
+  <a class="btn sm" href="https://boosty.to/geamsty/single-payment/donation/559345/target?share=target_link" target="_blank" rel="noopener">❤ Поддержать проект</a>
+</nav>
+<header class="hero" id="top">
   <div class="cup">🏆</div>
   <h1>Платина года</h1>
   <p>Выбери лучшую платину 2026. Смотри, кто дошёл до финала турнира.</p>
-  <div class="row"><button class="btn" id="go">К турниру</button></div>
+  <div class="row"><button class="btn" id="go">К турниру</button><a class="btn ghost" href="https://boosty.to/geamsty/single-payment/donation/559345/target?share=target_link" target="_blank" rel="noopener">❤ Поддержать проект</a></div>
 </header>
+
+<section id="news"><h2 class="title">Новости</h2><div class="wrap" id="nl"></div></section>
 
 <section id="tour">
   <h2 class="title">Ваши платины 2026</h2>
   <div class="panel"><div class="bracket" id="br"></div></div>
   <h2 class="title bot">Турнир ваших платин</h2>
 </section>
-<footer><a id="alink">Вход для админа</a></footer>
+<section id="leaderboard">
+  <h2 class="title">Лидерборд</h2>
+  <div class="wrap">
+    <div class="lbtools">
+      <div class="st" id="mehint">Войди через Steam, чтобы попасть в лидерборд.</div>
+      <div class="row"><button class="btn" id="mylogin">Войти через Steam</button><button class="btn" id="myscan" style="display:none">Проверить мои платины</button></div>
+      <div class="st" id="mst"></div>
+    </div>
+    <div id="lbl"></div>
+  </div>
+</section>
+<footer><a href="https://boosty.to/geamsty/single-payment/donation/559345/target?share=target_link" target="_blank" rel="noopener">Поддержать проект на Boosty</a> · <a id="alink">Вход для админа</a></footer>
 
 <button class="btn fab" id="fab">Админ-панель</button>
 
 <aside class="drawer" id="dr">
   <div class="dh"><h3>Админ-панель</h3><button class="x" id="dx" aria-label="Закрыть">×</button></div>
-  <input class="in" id="prof" placeholder="Профиль Steam: ссылка, ник или SteamID">
-  <button class="btn sm" id="scan">Найти платины</button>
-  <div class="st" id="sst">Выбери слот (номер слева) и нажми на игру.</div>
-  <div class="games" id="gm"></div>
-  <div class="row">
-    <button class="btn sm ghost" id="dl">Скачать data.json</button>
-    <button class="btn sm ghost" id="imp">Загрузить data.json</button>
-    <button class="btn sm ghost" id="rnd">Случайные победители</button>
-    <button class="btn sm ghost" id="rst">Сбросить к опубликованному</button>
-    <button class="btn sm ghost" id="out">Выйти</button>
+  <div class="tabs"><button class="tab on" data-t="pt">Турнир</button><button class="tab" data-t="pn">Новости</button></div>
+  <div class="pane on" id="pt">
+    <input class="in" id="prof" placeholder="Профиль Steam: ссылка, ник или SteamID">
+    <button class="btn sm" id="scan">Найти платины</button>
+    <div class="st" id="sst">Выбери слот (номер слева) и нажми на игру.</div>
+    <div class="games" id="gm"></div>
+    <div class="row">
+      <button class="btn sm" id="pub">Опубликовать сетку</button>
+      <button class="btn sm ghost" id="rnd">Случайные победители</button>
+      <button class="btn sm ghost" id="rst">Сбросить к опубликованному</button>
+    </div>
   </div>
-  <input type="file" id="file" accept=".json,application/json" hidden>
+  <div class="pane" id="pn">
+    <input class="in" id="nt" maxlength="120" placeholder="Заголовок новости">
+    <textarea class="in" id="nx" maxlength="5000" placeholder="Текст новости"></textarea>
+    <button class="btn sm" id="npub">Опубликовать новость</button>
+    <div class="st" id="nst"></div>
+    <div class="al" id="anl"></div>
+  </div>
+  <button class="btn sm ghost" id="out">Выйти из админки</button>
 </aside>
 
 <div class="modal" id="md">
@@ -204,7 +268,7 @@ function upd(){
 /* загрузка опубликованных данных */
 async function load(){
   let pub=EMPTY();
-  try{const r=await fetch("data.json?"+Date.now());if(r.ok)pub=norm(await r.json())}catch(e){}
+  try{const j=await(await fetch("/api/app?action=bracket")).json();if(j.data)pub=norm(j.data);else throw 0}catch(e){try{const r=await fetch("data.json?"+Date.now());if(r.ok)pub=norm(await r.json())}catch(e2){}}
   st=pub;
   if(admin)try{const d=localStorage.getItem(DK);if(d)st=norm(JSON.parse(d))}catch(e){}
   upd();
@@ -214,16 +278,16 @@ async function load(){
 async function api(body){
   let r,j;
   try{
-    r=await fetch("/api/steam",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password:pw,...body})});
+    r=await fetch("/api/app",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password:pw,...body})});
     j=await r.json();
-  }catch(e){throw new Error("Функция не отвечает. Проверь, что папка api (или netlify/functions) загружена на хостинг")}
+  }catch(e){throw new Error("Функция не отвечает. Проверь, что папка api загружена и сайт выложен на Vercel")}
   if(!r.ok)throw new Error(j.error||("Ошибка "+r.status));
   return j;
 }
 function setAdmin(on){
   admin=on;document.body.classList.toggle("admin",on);
   if(!on){$("#dr").classList.remove("open");try{sessionStorage.removeItem("pp")}catch(e){}pw=""}
-  load();
+  load();loadNews();
 }
 async function login(){
   pw=$("#pw").value;$("#lerr").textContent="";
@@ -276,18 +340,7 @@ $("#scan").onclick=async()=>{
 $("#prof").onkeydown=e=>{if(e.key==="Enter")$("#scan").click()};
 
 /* инструменты */
-$("#dl").onclick=()=>{
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(st,null,1)],{type:"application/json"}));
-  a.download="data.json";a.click();URL.revokeObjectURL(a.href);
-  status("Скачано. Положи data.json в папку сайта и загрузи папку на Netlify.");
-};
-$("#imp").onclick=()=>$("#file").click();
-$("#file").onchange=async e=>{
-  const f=e.target.files[0];if(!f)return;
-  try{st=norm(JSON.parse(await f.text()));save();upd();status("Файл загружен.")}catch(x){status("Не удалось прочитать файл",true)}
-  e.target.value="";
-};
+$("#pub").onclick=async()=>{try{await api({action:"bracket_set",data:st});try{localStorage.removeItem(DK)}catch(e){}status("Сетка опубликована, теперь её видят все.")}catch(e){status(e.message,true)}};
 $("#rst").onclick=()=>{try{localStorage.removeItem(DK)}catch(e){}load();status("Показаны опубликованные данные.")};
 $("#rnd").onclick=()=>{
   for(let r=0;r<4;r++)for(let m=0;m<sizes[r];m++)
@@ -297,8 +350,88 @@ $("#rnd").onclick=()=>{
 if(location.hash==="#admin")setTimeout(openLogin,400);
 (async()=>{
   if(pw){try{await api({action:"login"});admin=true;document.body.classList.add("admin")}catch(e){pw=""}}
-  load();
+  load();loadNews();
 })();
+
+/* вкладки админки */
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id===t.dataset.t));
+});
+/* новости */
+async function loadNews(){
+  let list=[];try{list=(await(await fetch("/api/app?action=news")).json()).news||[]}catch(e){}
+  const box=$("#nl");box.innerHTML="";
+  if(!list.length)box.innerHTML='<div class="empty">Новостей пока нет</div>';
+  list.forEach(n=>{
+    const c=document.createElement("article");c.className="news";
+    const d=document.createElement("time");d.textContent=new Date(n.date).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+    const h=document.createElement("h3");h.textContent=n.title;
+    const p=document.createElement("p");p.textContent=n.text;
+    c.append(d,h,p);box.append(c);
+  });
+  const al=$("#anl");al.innerHTML="";
+  if(admin)list.forEach(n=>{
+    const r=document.createElement("div");r.className="ai";
+    const t=document.createElement("span");t.textContent=n.title;
+    const x=document.createElement("button");x.className="btn sm ghost";x.textContent="Удалить";
+    x.onclick=async()=>{try{await api({action:"news_del",id:n.id});loadNews()}catch(e){nst(e.message,1)}};
+    r.append(t,x);al.append(r);
+  });
+}
+function nst(t,e){const s=$("#nst");s.textContent=t;s.classList.toggle("err",!!e)}
+$("#npub").onclick=async()=>{
+  try{await api({action:"news_add",title:$("#nt").value,text:$("#nx").value});$("#nt").value="";$("#nx").value="";nst("Новость опубликована");loadNews()}
+  catch(e){nst(e.message,1)}
+};
+/* лидерборд */
+async function loadLb(){
+  let list=[];try{list=(await(await fetch("/api/app?action=lb")).json()).lb||[]}catch(e){}
+  const t=$("#lbl");t.innerHTML="";
+  if(!list.length){t.innerHTML='<div class="empty">Пока никого. Войди через Steam и стань первым.</div>';return}
+  list.forEach((u,i)=>{
+    const a=document.createElement("a");a.className="lrow"+(i<3?" top"+(i+1):"");
+    a.href="https://steamcommunity.com/profiles/"+u.id;a.target="_blank";a.rel="noopener";
+    const r=document.createElement("b");r.textContent=i+1;
+    const im=document.createElement("img");im.alt="";if(/^https:\/\//.test(u.avatar))im.src=u.avatar;
+    const n=document.createElement("span");n.textContent=u.name;
+    const c=document.createElement("em");c.textContent=u.count;
+    a.append(r,im,n,c);t.append(a);
+  });
+}
+/* вход через Steam */
+let me=null;
+async function loadMe(){try{me=(await(await fetch("/api/app?action=me")).json()).me||null}catch(e){me=null}renderMe()}
+function renderMe(){
+  const nu=$("#nu");nu.innerHTML="";
+  const b=document.createElement("button");b.className="btn sm ghost";
+  if(me){
+    const c=document.createElement("div");c.className="chip";
+    const im=document.createElement("img");im.alt="";if(/^https:\/\//.test(me.avatar))im.src=me.avatar;
+    const n=document.createElement("span");n.textContent=me.name;
+    b.textContent="Выйти";b.onclick=()=>location.href="/api/app?action=logout";
+    c.append(im,n,b);nu.append(c);
+  }else{b.textContent="Войти через Steam";b.onclick=()=>location.href="/api/app?action=login";nu.append(b)}
+  $("#mylogin").style.display=me?"none":"inline-block";
+  $("#myscan").style.display=me?"inline-block":"none";
+  $("#mehint").textContent=me?`Ты вошёл как ${me.name}. Платин: ${me.count}`:"Войди через Steam, чтобы попасть в лидерборд.";
+}
+$("#mylogin").onclick=()=>location.href="/api/app?action=login";
+$("#myscan").onclick=async()=>{
+  const b=$("#myscan"),s=$("#mst");b.disabled=true;s.classList.remove("err");
+  try{
+    s.textContent="Получаю список игр…";
+    const r=await api({action:"my_games"}),list=r.games.filter(g=>g.playtime>0);let n=0;
+    for(let i=0;i<list.length;i+=8){
+      const a=await api({action:"my_achv",appids:list.slice(i,i+8).map(g=>g.appid)});n+=a.found;
+      s.textContent=`Проверено ${Math.min(i+8,list.length)} из ${list.length}, платин: ${n}`;
+    }
+    const d=await api({action:"my_done"});s.textContent=`Готово! Платин: ${d.count}`;me.count=d.count;renderMe();loadLb();
+  }catch(e){s.textContent=e.message;s.classList.add("err")}
+  b.disabled=false;
+};
+if(/[?&]err=steam/.test(location.search)){$("#mst").textContent="Не удалось войти через Steam, попробуй ещё раз.";$("#mst").classList.add("err")}
+loadMe();loadLb();
 </script>
 </body>
 </html>
