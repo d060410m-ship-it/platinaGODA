@@ -1,0 +1,7 @@
+[build]
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/steam"
+  to = "/.netlify/functions/steam"
+  status = 200
