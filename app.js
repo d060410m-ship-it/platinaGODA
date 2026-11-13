@@ -51,6 +51,7 @@ module.exports = async (req, res) => {
   try {
     /* ---- публичное чтение ---- */
     if (req.method === "GET") {
+      if (act === "ping") return out(200, { ok: true, steamKey: !!E.STEAM_API_KEY, adminPassword: !!E.ADMIN_PASSWORD, database: !!(RU() && RT()), origin });
       if (act === "news") { try { return out(200, { news: jp(await rd("GET", "news"), []) }); } catch (e) { return out(200, { news: [] }); } }
       if (act === "bracket") { try { return out(200, { data: jp(await rd("GET", "bracket"), null) }); } catch (e) { return out(200, { data: null }); } }
       if (act === "lb") {

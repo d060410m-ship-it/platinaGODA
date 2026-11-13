@@ -202,16 +202,16 @@ textarea.in{min-height:140px;resize:vertical}
 <script>
 const $=s=>document.querySelector(s);
 const SEEDS=[1,16,9,8,5,12,13,4,3,14,11,6,7,10,15,2],sizes=[8,4,2,1];
-const EMPTY=()=>({n:Array.from({length:16},()=>({t:"",a:0})),w:[Array(8).fill(null),Array(4).fill(null),Array(2).fill(null),[null]]});
+const EMPTY=()=>({x:{},n:Array.from({length:16},()=>({t:"",a:0})),w:[Array(8).fill(null),Array(4).fill(null),Array(2).fill(null),[null]]});
 const DK="platina_draft",img=a=>`https://cdn.akamai.steamstatic.com/steam/apps/${a}/header.jpg`;
 let st=EMPTY(),admin=false,pw="",sel=0,plat=[];
 try{pw=sessionStorage.getItem("pp")||""}catch(e){}
 function norm(x){
   try{if(x&&Array.isArray(x.n)&&x.n.length===16&&Array.isArray(x.w)&&x.w.length===4)
-    return{n:x.n.map(o=>typeof o==="string"?{t:o,a:0}:{t:String(o.t||""),a:+o.a||0}),w:x.w}}catch(e){}
+    return{x:(x.x&&typeof x.x==="object")?x.x:{},n:x.n.map(o=>typeof o==="string"?{t:o,a:0}:{t:String(o.t||""),a:+o.a||0}),w:x.w}}catch(e){}
   return EMPTY();
 }
-const slot=(r,m,s)=>{if(r===0)return st.n[2*m+s];const p=2*m+s,w=st.w[r-1][p];return w==null?{t:"",a:0}:slot(r-1,p,w)};
+const slot=(r,m,s)=>{if(r===0)return st.n[2*m+s];const ov=st.x&&st.x[r+"-"+m+"-"+s];if(ov)return ov;const p=2*m+s,w=st.w[r-1][p];return w==null?{t:"",a:0}:slot(r-1,p,w)};
 const clear=(r,m)=>{if(r<3){const q=m>>1;if(st.w[r+1][q]!=null){st.w[r+1][q]=null;clear(r+1,q)}}};
 const save=()=>{if(admin)try{localStorage.setItem(DK,JSON.stringify(st))}catch(e){}};
 
@@ -233,7 +233,7 @@ sizes.forEach((cnt,r)=>{
         if(r===0){
           sd.onclick=()=>{if(admin){sel=i;upd()}};
           inp.oninput=()=>{st.n[i]={t:inp.value,a:0};save();upd()};
-        }
+        }else inp.oninput=()=>{const k=r+"-"+m+"-"+s;st.x=st.x||{};if(inp.value.trim())st.x[k]={t:inp.value,a:0};else delete st.x[k];save();upd()};
         b.onclick=()=>{if(!slot(r,m,s).t)return;st.w[r][m]=st.w[r][m]===s?null:s;clear(r,m);save();upd()};
         row.append(sd,im,inp,b);box.append(row);refs[r][m][s]={row,sd,im,inp,b};
       }
@@ -252,7 +252,7 @@ function upd(){
   refs.forEach((rr,r)=>rr.forEach((ms,m)=>ms.forEach((o,s)=>{
     const v=slot(r,m,s),w=st.w[r][m];
     if(document.activeElement!==o.inp)o.inp.value=v.t;
-    o.inp.readOnly=!(admin&&r===0);
+    o.inp.readOnly=!admin;
     if(v.a){const u=img(v.a);if(o.im.dataset.u!==u){o.im.dataset.u=u;o.im.src=u}o.im.style.display="block"}else{o.im.style.display="none";o.im.dataset.u=""}
     o.row.classList.toggle("win",w===s);
     o.row.classList.toggle("lose",w!=null&&w!==s);
