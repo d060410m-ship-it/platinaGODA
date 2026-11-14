@@ -127,18 +127,13 @@ textarea.in{min-height:140px;resize:vertical}
 .al{overflow:auto;display:flex;flex-direction:column;gap:8px}
 .ai{display:flex;gap:8px;align-items:center;background:var(--slot);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700}
 .ai span{flex:1}
-.tx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;height:100%}
-.tx input{flex:none;height:auto;width:100%;line-height:1.25;padding:0 8px}
-.tx .au{font-size:11px;font-weight:600;color:var(--mute)}
-.tx input::placeholder{color:transparent}
-body.admin .tx input::placeholder{color:#5a5f74}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <nav class="nav">
   <a class="logo" href="#top">🏆 Платина года</a>
-  <a class="lk" href="#news">Новости</a><a class="lk" href="#tour">Турнир</a><a class="lk" href="#community">Сообщество</a>
+  <a class="lk" href="#news">Новости</a><a class="lk" href="#tour">Турнир</a><a class="lk" href="#leaderboard">Лидерборд</a>
   <span id="nu"></span>
   <a class="btn sm" href="https://boosty.to/geamsty/single-payment/donation/559345/target?share=target_link" target="_blank" rel="noopener">❤ Поддержать проект</a>
 </nav>
@@ -153,15 +148,14 @@ body.admin .tx input::placeholder{color:#5a5f74}
 
 <section id="tour">
   <h2 class="title">Ваши платины 2026</h2>
-  <div class="row" style="margin-bottom:22px"><button class="btn" id="addp">+ Добавить свою платину</button></div>
   <div class="panel"><div class="bracket" id="br"></div></div>
   <h2 class="title bot">Турнир ваших платин</h2>
 </section>
-<section id="community">
-  <h2 class="title">Сообщество</h2>
+<section id="leaderboard">
+  <h2 class="title">Лидерборд</h2>
   <div class="wrap">
     <div class="lbtools">
-      <div class="st" id="mehint">Войди через Steam и стань частью сообщества.</div>
+      <div class="st" id="mehint">Войди через Steam, чтобы попасть в лидерборд.</div>
       <div class="row"><button class="btn" id="mylogin">Войти через Steam</button><button class="btn" id="myscan" style="display:none">Проверить мои платины</button></div>
       <div class="st" id="mst"></div>
     </div>
@@ -196,15 +190,6 @@ body.admin .tx input::placeholder{color:#5a5f74}
   <button class="btn sm ghost" id="out">Выйти из админки</button>
 </aside>
 
-<div class="modal" id="am">
-  <div class="box">
-    <h3>Твоя платина</h3>
-    <input class="in" id="ag" maxlength="60" placeholder="Название игры">
-    <input class="in" id="an" maxlength="30" placeholder="Твоё имя">
-    <div class="st err" id="aerr"></div>
-    <div class="row"><button class="btn sm" id="asend">Отправить</button><button class="btn sm ghost" id="ac">Отмена</button></div>
-  </div>
-</div>
 <div class="modal" id="md">
   <div class="box">
     <h3>Вход для админа</h3>
@@ -217,13 +202,13 @@ body.admin .tx input::placeholder{color:#5a5f74}
 <script>
 const $=s=>document.querySelector(s);
 const SEEDS=[1,16,9,8,5,12,13,4,3,14,11,6,7,10,15,2],sizes=[8,4,2,1];
-const EMPTY=()=>({x:{},n:Array.from({length:16},()=>({t:"",a:0,u:""})),w:[Array(8).fill(null),Array(4).fill(null),Array(2).fill(null),[null]]});
+const EMPTY=()=>({x:{},n:Array.from({length:16},()=>({t:"",a:0})),w:[Array(8).fill(null),Array(4).fill(null),Array(2).fill(null),[null]]});
 const DK="platina_draft",img=a=>`https://cdn.akamai.steamstatic.com/steam/apps/${a}/header.jpg`;
 let st=EMPTY(),admin=false,pw="",sel=0,plat=[];
 try{pw=sessionStorage.getItem("pp")||""}catch(e){}
 function norm(x){
   try{if(x&&Array.isArray(x.n)&&x.n.length===16&&Array.isArray(x.w)&&x.w.length===4)
-    return{x:(x.x&&typeof x.x==="object")?x.x:{},n:x.n.map(o=>typeof o==="string"?{t:o,a:0,u:""}:{t:String(o.t||""),a:+o.a||0,u:String(o.u||"")}),w:x.w}}catch(e){}
+    return{x:(x.x&&typeof x.x==="object")?x.x:{},n:x.n.map(o=>typeof o==="string"?{t:o,a:0}:{t:String(o.t||""),a:+o.a||0}),w:x.w}}catch(e){}
   return EMPTY();
 }
 const slot=(r,m,s)=>{if(r===0)return st.n[2*m+s];const ov=st.x&&st.x[r+"-"+m+"-"+s];if(ov)return ov;const p=2*m+s,w=st.w[r-1][p];return w==null?{t:"",a:0}:slot(r-1,p,w)};
@@ -244,14 +229,13 @@ sizes.forEach((cnt,r)=>{
         const sd=document.createElement("span");sd.className="sd";sd.textContent=r===0?SEEDS[i]:"";
         const im=document.createElement("img");im.alt="";im.onerror=()=>{im.style.display="none"};
         const inp=document.createElement("input");inp.type="text";inp.maxLength=60;inp.setAttribute("aria-label","Платина");inp.readOnly=true;
-        const au=document.createElement("input");au.type="text";au.maxLength=30;au.className="au";au.placeholder="имя";au.setAttribute("aria-label","Имя");au.readOnly=true;
-        const tx=document.createElement("div");tx.className="tx";tx.append(inp,au);
         const b=document.createElement("button");b.type="button";b.textContent="✓";b.setAttribute("aria-label","Победитель");
-        const edit=()=>{const o={t:inp.value,a:0,u:au.value};if(r===0)st.n[i]=o;else{const k=r+"-"+m+"-"+s;st.x=st.x||{};if(o.t.trim()||o.u.trim())st.x[k]=o;else delete st.x[k]}save();upd()};
-        inp.oninput=edit;au.oninput=edit;
-        if(r===0)sd.onclick=()=>{if(admin){sel=i;upd()}};
+        if(r===0){
+          sd.onclick=()=>{if(admin){sel=i;upd()}};
+          inp.oninput=()=>{st.n[i]={t:inp.value,a:0};save();upd()};
+        }else inp.oninput=()=>{const k=r+"-"+m+"-"+s;st.x=st.x||{};if(inp.value.trim())st.x[k]={t:inp.value,a:0};else delete st.x[k];save();upd()};
         b.onclick=()=>{if(!slot(r,m,s).t)return;st.w[r][m]=st.w[r][m]===s?null:s;clear(r,m);save();upd()};
-        row.append(sd,im,tx,b);box.append(row);refs[r][m][s]={row,sd,im,inp,au,b};
+        row.append(sd,im,inp,b);box.append(row);refs[r][m][s]={row,sd,im,inp,b};
       }
       gr.append(box);
     }
@@ -267,8 +251,8 @@ $("#cim").onerror=function(){this.style.display="none"};
 function upd(){
   refs.forEach((rr,r)=>rr.forEach((ms,m)=>ms.forEach((o,s)=>{
     const v=slot(r,m,s),w=st.w[r][m];
-    if(document.activeElement!==o.inp)o.inp.value=v.t;if(document.activeElement!==o.au)o.au.value=v.u||"";
-    o.inp.readOnly=!admin;o.au.readOnly=!admin;o.au.style.display=(admin||v.u)?"block":"none";
+    if(document.activeElement!==o.inp)o.inp.value=v.t;
+    o.inp.readOnly=!admin;
     if(v.a){const u=img(v.a);if(o.im.dataset.u!==u){o.im.dataset.u=u;o.im.src=u}o.im.style.display="block"}else{o.im.style.display="none";o.im.dataset.u=""}
     o.row.classList.toggle("win",w===s);
     o.row.classList.toggle("lose",w!=null&&w!==s);
@@ -276,7 +260,7 @@ function upd(){
     if(r===0)o.sd.classList.toggle("sel",admin&&sel===2*m+s);
   })));
   const c=st.w[3][0]==null?{t:"",a:0}:slot(3,0,st.w[3][0]);
-  $("#ch").textContent=c.t+(c.u?" · "+c.u:"");
+  $("#ch").textContent=c.t;
   $("#tr").classList.toggle("on",!!c.t);
   const ci=$("#cim");if(c.a){ci.src=img(c.a);ci.style.display="block"}else ci.style.display="none";
 }
@@ -294,7 +278,7 @@ async function load(){
 async function api(body){
   let r,j;
   try{
-    r=await fetch(String(body.action).startsWith("my_")?"/api/auth":"/api/app",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password:pw,...body})});
+    r=await fetch("/api/app",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password:pw,...body})});
     j=await r.json();
   }catch(e){throw new Error("Функция не отвечает. Проверь, что папка api загружена и сайт выложен на Vercel")}
   if(!r.ok)throw new Error(j.error||("Ошибка "+r.status));
@@ -400,45 +384,24 @@ $("#npub").onclick=async()=>{
   try{await api({action:"news_add",title:$("#nt").value,text:$("#nx").value});$("#nt").value="";$("#nx").value="";nst("Новость опубликована");loadNews()}
   catch(e){nst(e.message,1)}
 };
-/* добавить свою платину */
-$("#addp").onclick=()=>{$("#aerr").textContent="";$("#am").classList.add("open");setTimeout(()=>$("#ag").focus(),300)};
-$("#ac").onclick=()=>$("#am").classList.remove("open");
-$("#asend").onclick=async()=>{
-  const e=$("#aerr");e.textContent="";
-  try{
-    await api({action:"bracket_add",game:$("#ag").value,name:$("#an").value});
-    $("#ag").value="";$("#an").value="";$("#am").classList.remove("open");
-    await load();$("#tour").scrollIntoView({behavior:"smooth"});
-  }catch(x){e.textContent=x.message}
-};
-
-/* сообщество и вход через Steam */
-function cst(t,e){const s=$("#mst");s.textContent=t;s.classList.toggle("err",!!e)}
-async function steamLogin(){
-  try{
-    const j=await(await fetch("/api/auth?action=ping")).json();
-    if(!j.ok)throw 0;
-    const miss=[];if(!j.steamKey)miss.push("STEAM_API_KEY");if(!j.adminPassword)miss.push("ADMIN_PASSWORD");if(!j.database)miss.push("база данных Upstash");
-    if(miss.length){cst("Вход пока не настроен на сервере, не хватает: "+miss.join(", ")+".",1);return}
-    location.href="/api/auth?action=login";
-  }catch(e){cst("Сервер сайта не отвечает: папка api не загружена или деплой на Vercel не прошёл.",1)}
-}
-async function loadMembers(){
-  let list=[];try{list=(await(await fetch("/api/auth?action=members")).json()).members||[]}catch(e){}
+/* лидерборд */
+async function loadLb(){
+  let list=[];try{list=(await(await fetch("/api/app?action=lb")).json()).lb||[]}catch(e){}
   const t=$("#lbl");t.innerHTML="";
-  if(!list.length){t.innerHTML='<div class="empty">В сообществе пока никого. Войди через Steam и будь первым.</div>';return}
+  if(!list.length){t.innerHTML='<div class="empty">Пока никого. Войди через Steam и стань первым.</div>';return}
   list.forEach((u,i)=>{
     const a=document.createElement("a");a.className="lrow"+(i<3?" top"+(i+1):"");
     a.href="https://steamcommunity.com/profiles/"+u.id;a.target="_blank";a.rel="noopener";
     const r=document.createElement("b");r.textContent=i+1;
     const im=document.createElement("img");im.alt="";if(/^https:\/\//.test(u.avatar))im.src=u.avatar;
     const n=document.createElement("span");n.textContent=u.name;
-    const c=document.createElement("em");c.textContent="🏆 "+u.count;
+    const c=document.createElement("em");c.textContent=u.count;
     a.append(r,im,n,c);t.append(a);
   });
 }
+/* вход через Steam */
 let me=null;
-async function loadMe(){try{me=(await(await fetch("/api/auth?action=me")).json()).me||null}catch(e){me=null}renderMe()}
+async function loadMe(){try{me=(await(await fetch("/api/app?action=me")).json()).me||null}catch(e){me=null}renderMe()}
 function renderMe(){
   const nu=$("#nu");nu.innerHTML="";
   const b=document.createElement("button");b.className="btn sm ghost";
@@ -446,28 +409,29 @@ function renderMe(){
     const c=document.createElement("div");c.className="chip";
     const im=document.createElement("img");im.alt="";if(/^https:\/\//.test(me.avatar))im.src=me.avatar;
     const n=document.createElement("span");n.textContent=me.name;
-    b.textContent="Выйти";b.onclick=()=>location.href="/api/auth?action=logout";
+    b.textContent="Выйти";b.onclick=()=>location.href="/api/app?action=logout";
     c.append(im,n,b);nu.append(c);
-  }else{b.textContent="Войти через Steam";b.onclick=steamLogin;nu.append(b)}
+  }else{b.textContent="Войти через Steam";b.onclick=()=>location.href="/api/app?action=login";nu.append(b)}
   $("#mylogin").style.display=me?"none":"inline-block";
   $("#myscan").style.display=me?"inline-block":"none";
-  $("#mehint").textContent=me?`Ты в сообществе как ${me.name}. Платин: ${me.count}`:"Войди через Steam и стань частью сообщества.";
+  $("#mehint").textContent=me?`Ты вошёл как ${me.name}. Платин: ${me.count}`:"Войди через Steam, чтобы попасть в лидерборд.";
 }
-$("#mylogin").onclick=steamLogin;
+$("#mylogin").onclick=()=>location.href="/api/app?action=login";
 $("#myscan").onclick=async()=>{
-  const b=$("#myscan");b.disabled=true;cst("Получаю список игр…");
+  const b=$("#myscan"),s=$("#mst");b.disabled=true;s.classList.remove("err");
   try{
+    s.textContent="Получаю список игр…";
     const r=await api({action:"my_games"}),list=r.games.filter(g=>g.playtime>0);let n=0;
     for(let i=0;i<list.length;i+=8){
       const a=await api({action:"my_achv",appids:list.slice(i,i+8).map(g=>g.appid)});n+=a.found;
-      cst(`Проверено ${Math.min(i+8,list.length)} из ${list.length}, платин: ${n}`);
+      s.textContent=`Проверено ${Math.min(i+8,list.length)} из ${list.length}, платин: ${n}`;
     }
-    const d=await api({action:"my_done"});cst(`Готово! Платин: ${d.count}`);me.count=d.count;renderMe();loadMembers();
-  }catch(e){cst(e.message,1)}
+    const d=await api({action:"my_done"});s.textContent=`Готово! Платин: ${d.count}`;me.count=d.count;renderMe();loadLb();
+  }catch(e){s.textContent=e.message;s.classList.add("err")}
   b.disabled=false;
 };
-if(/[?&]err=steam/.test(location.search))cst("Не удалось войти через Steam, попробуй ещё раз.",1);
-loadMe();loadMembers();
+if(/[?&]err=steam/.test(location.search)){$("#mst").textContent="Не удалось войти через Steam, попробуй ещё раз.";$("#mst").classList.add("err")}
+loadMe();loadLb();
 </script>
 </body>
 </html>

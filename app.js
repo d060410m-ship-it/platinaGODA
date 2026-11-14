@@ -44,6 +44,7 @@ module.exports = async (req, res) => {
   try {
     if (req.method === "GET") {
       if (act === "ping") return out(200, { ok: true, steamKey: !!E.STEAM_API_KEY, adminPassword: !!E.ADMIN_PASSWORD, database: !!(RU() && RT()) });
+      if (act === "community") { try { return out(200, { members: jp(await rd("GET", "members"), []) }); } catch (e) { return out(200, { members: [] }); } }
       if (act === "news") { try { return out(200, { news: jp(await rd("GET", "news"), []) }); } catch (e) { return out(200, { news: [] }); } }
       if (act === "bracket") { try { return out(200, { data: jp(await rd("GET", "bracket"), null) }); } catch (e) { return out(200, { data: null }); } }
       return out(400, { error: "Неизвестное действие" });
@@ -65,6 +66,19 @@ module.exports = async (req, res) => {
       return out(200, { ok: true, slot: i + 1 });
     }
 
+    /* любой посетитель: вступить в сообщество (только ник, без Steam) */
+    if (act === "join") {
+      const name = clean(b.name, 24), game = clean(b.game, 60);
+      if (name.length < 2) return out(400, { error: "Ник должен быть хотя бы из 2 символов" });
+      const list = jp(await rd("GET", "members"), []);
+      if (list.some((x) => String(x.name).toLowerCase() === name.toLowerCase())) return out(409, { error: "Такой ник уже занят" });
+      const ip = String(req.headers["x-forwarded-for"] || "?").split(",")[0].trim();
+      if (!(await rd("SET", "rj:" + ip, "1", "EX", 600, "NX"))) return out(429, { error: "Подожди 10 минут перед следующей заявкой" });
+      list.unshift({ id: Date.now().toString(36), name, game, date: new Date().toISOString() });
+      await rd("SET", "members", JSON.stringify(list.slice(0, 500)));
+      return out(200, { ok: true });
+    }
+
     /* админ (пароль) */
     if (!E.ADMIN_PASSWORD) return out(500, { error: "В настройках хостинга не задан ADMIN_PASSWORD" });
     if (!b.password || b.password !== E.ADMIN_PASSWORD) return out(401, { error: "Неверный пароль" });
@@ -79,6 +93,10 @@ module.exports = async (req, res) => {
     }
     if (act === "news_del") {
       await rd("SET", "news", JSON.stringify(jp(await rd("GET", "news"), []).filter((x) => x.id !== b.id)));
+      return out(200, { ok: true });
+    }
+    if (act === "member_del") {
+      await rd("SET", "members", JSON.stringify(jp(await rd("GET", "members"), []).filter((x) => x.id !== b.id)));
       return out(200, { ok: true });
     }
     if (act === "bracket_set") {
